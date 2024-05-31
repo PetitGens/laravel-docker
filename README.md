@@ -10,6 +10,15 @@ Un projet docker compose que j'ai créer dans le but de pouvoir mettre en place 
 - (optionnel) faire la config pour ne plus avoir à utiliser sudo
 pour exécuter Docker (sinon, on le met à chaque fois)
 
+- Cloner ce projet, ainsi que le projet Laravel si ce n'est pas déjà fait, il doivent être dans le même dossier :
+```
+xxx
+  /laravel-docker
+    /...
+  /projet-laravel
+    /... 
+```
+- Entrer dans le projet docker : `cd laravel-docker`
 - Copier le `.env` : `cp .env.dist .env`, et éventuellement le personnaliser
 - Construire les conteneurs : `[sudo] ./tools/dkup.sh`
 - Vérifier que vous avez 4 conteneurs de lancé : `[sudo] docker ps`
