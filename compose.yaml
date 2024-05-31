@@ -9,6 +9,13 @@ services:
     environment:
       SERVICE_NAME: app
       SERVICE_TAGS: dev
+      #DB Connection
+      DB_CONNECTION: mysql
+      DB_HOST: db
+      DB_PORT: ${DB_PORT:-3306}
+      DB_DATABASE: laravel
+      DB_USERNAME: ${DB_USER}
+      DB_PASSWORD: ${DB_PASS}
 
     working_dir: /var/www
     volumes:
@@ -45,6 +52,8 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
       SERVICE_TAGS: dev
       SERVICE_NAME: mysql
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
     volumes:
       - dbdata:/var/lib/mysql/
     networks:
