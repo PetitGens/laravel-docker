@@ -1,0 +1,71 @@
+services:
+  #PHP-FPM
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: ${RESTART:-no}
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+
+    working_dir: /var/www
+    volumes:
+      - ${PROJECT_PATH:-../laravel-base}:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx
+  webserver:
+    image: nginx:alpine3.19
+    restart: ${RESTART:-no}
+    tty: true
+    ports:
+      - "8989:80"
+      - "443:443"
+    volumes:
+      - ${PROJECT_PATH}:/var/www
+      - ./nginx/:/etc/nginx/conf.d/
+    networks:
+      - app-network
+
+  #MySQL
+  db:
+    image: mysql:5.7.22
+    restart: ${RESTART:-no}
+    tty: true
+    environment:
+      MYSQL_DATABASE: laravel
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_TCP_PORT: ${DB_PORT}  
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+    networks:
+      - app-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_PORT: ${DB_PORT}
+    ports:
+      - 8020:80
+    restart: ${RESTART:-no}
+    networks:
+      - app-network
+
+#Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
